@@ -54,7 +54,7 @@ namespace details_ {
   abu::dbg::details_::handle_assert_failure(#condition, __FILE__, __LINE__)
 #else
 #if defined(_MSC_VER)
-#define abu_assume __assume
+#define abu_assume(condition) ((void)condition); __assume(condition)
 #else
 #define abu_assume(condition) \
   if (!(condition)) abu_unreachable()
