@@ -33,8 +33,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Configure
-        env:
-          CXX: ${{matrix.compiler}}
         run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
 
       - name: Build
