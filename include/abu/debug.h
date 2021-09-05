@@ -25,19 +25,19 @@
 #endif
 #endif
 
-namespace abu::dbg {
-
-namespace details_ {
+namespace abu::dbg::details_ {
 [[noreturn]] void handle_assert_failure(const char* msg,
                                         const char* file,
                                         int line) noexcept;
-}  // namespace details_
+}  // namespace abu::dbg::details_
 
+// ***** unreachable() *****
 #if ABU_ENABLE_CHECKS
 #define abu_unreachable()                    \
   abu::dbg::details_::handle_assert_failure( \
       "Executed unreachable code", __FILE__, __LINE__)
 #else
+
 #if defined(__GNUC__)
 #define abu_unreachable __builtin_unreachable
 #elif defined(_MSC_VER)
@@ -45,20 +45,17 @@ namespace details_ {
 #else
 #define abu_unreachable() (void)
 #endif
-#endif
-}  // namespace abu::dbg
 
+#endif
+
+// ***** abu_assume() *****
 #if ABU_ENABLE_CHECKS
 #define abu_assume(condition) \
   if (!(condition))           \
   abu::dbg::details_::handle_assert_failure(#condition, __FILE__, __LINE__)
 #else
-#if defined(_MSC_VER)
-#define abu_assume(condition) ((void)condition); __assume(condition)
-#else
 #define abu_assume(condition) \
   if (!(condition)) abu_unreachable()
-#endif
 #endif  // ABU_ENABLE_CHECKS
 
 #define abu_precondition(condition) abu_assume(condition)
