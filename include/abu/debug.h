@@ -15,38 +15,51 @@
 #ifndef ABU_DEBUG_H_INCLUDED
 #define ABU_DEBUG_H_INCLUDED
 
-#include <cassert>
+#include <cstdlib>
+
+#ifndef ABU_ENABLE_CHECKS
+#if !defined(NDEBUG)
+#define ABU_ENABLE_CHECKS 1
+#else
+#define ABU_ENABLE_CHECKS 0
+#endif
+#endif
 
 namespace abu::dbg {
-#ifndef NDEBUG
-[[noreturn]] inline void unreachable() {
-  assert(false);
-}
+
+namespace details_ {
+[[noreturn]] void handle_assert_failure(const char* msg,
+                                        const char* file,
+                                        int line) noexcept;
+}  // namespace details_
+
+#if ABU_ENABLE_CHECKS
+#define abu_unreachable()                    \
+  abu::dbg::details_::handle_assert_failure( \
+      "Executed unreachable code", __FILE__, __LINE__)
 #else
 #if defined(__GNUC__)
-[[noreturn]] inline __attribute__((always_inline)) void unreachable() {
-  __builtin_unreachable();
-}
+#define abu_unreachable __builtin_unreachable
 #elif defined(_MSC_VER)
-[[noreturn]] __forceinline void unreachable() {
-  __assume(false);
-}
+#define abu_unreachable() __assume(false)
 #else
-inline void unreachable() {}
+#define abu_unreachable() (void)
 #endif
 #endif
 }  // namespace abu::dbg
 
-#if defined(NDEBUG)
+#if ABU_ENABLE_CHECKS
+#define abu_assume(condition) \
+  if (!(condition))           \
+  abu::dbg::details_::handle_assert_failure(#condition, __FILE__, __LINE__)
+#else
 #if defined(_MSC_VER)
 #define abu_assume __assume
 #else
 #define abu_assume(condition) \
-  if (!(condition)) abu::dbg::unreachable()
+  if (!(condition)) abu_unreachable()
 #endif
-#else  // NDEBUG
-#define abu_assume(condition) assert(condition)
-#endif
+#endif  // ABU_ENABLE_CHECKS
 
 #define abu_precondition(condition) abu_assume(condition)
 #define abu_postcondition(condition) abu_assume(condition)

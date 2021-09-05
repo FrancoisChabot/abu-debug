@@ -21,7 +21,7 @@ TEST(common, basic_api_test) {
   abu_postcondition(true);
 }
 
-TEST(common, code_in_assumption_is_always_executed) {
+TEST(common, code_in_assumption_is_always_executed_once) {
   int count = 0;
   auto foo = [&]() {
     ++count;
@@ -45,7 +45,7 @@ bool unreachable_if_under_5(int v) {
   }
   // This is not supposed to cause any warning despite being an unreturning
   // branch.
-  abu::dbg::unreachable();
+  abu_unreachable();
 }
 }  // namespace
 
@@ -60,7 +60,8 @@ TEST(common, can_assume_func_calls_with_commas) {
 
 #ifndef NDEBUG
 TEST(debug, failed_assumptions_are_fatal) {
-  EXPECT_DEATH(abu_assume(1 < 0), "");
+  int x = 1;
+  EXPECT_DEATH(abu_assume(x < 0), "");
 }
 
 TEST(debug, reaching_unreachable_code_is_fatal) {
