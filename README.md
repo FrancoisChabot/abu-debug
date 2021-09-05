@@ -1,5 +1,7 @@
 # Abu Debug
 
+[![CI](https://github.com/FrancoisChabot/abu-debug/actions/workflows/ci.yml/badge.svg)](https://github.com/FrancoisChabot/abu-debug/actions/workflows/ci.yml)
+
 This is part of the [Abu](http://github.com/FrancoisChabot/abu) meta-project.
 
 This contains utilities to ensure program correctness.
