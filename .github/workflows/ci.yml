@@ -24,7 +24,7 @@ jobs:
         working-directory: ${{github.workspace}}/build
         run: ctest -C ${{matrix.build_type}} --output-on-failure
   
-  build-and-test-macos-clang:
+  build-and-test-macos:
     strategy:
       matrix:
         compiler: [clang++, g++-10, g++-11]
@@ -48,13 +48,15 @@ jobs:
   build-and-test-windows:
     strategy:
       matrix:
+        toolset: [ClangCL, host=x64, host=x86]
+        arch: [Win32, x64]
         build_type: [Debug, Release]
 
     runs-on: windows-2019
     steps:
       - uses: actions/checkout@v2
       - name: Configure
-        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
+        run: cmake -B ${{github.workspace}}/build -T ${{matrix.toolset}}  -A ${{matrix.arch}}
 
       - name: Build
         run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}}
