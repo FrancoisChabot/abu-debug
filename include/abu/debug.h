@@ -18,6 +18,11 @@
 #include <cassert>
 
 namespace abu::dbg {
+#ifndef NDEBUG
+[[noreturn]] inline void unreachable() {
+  assert(false);
+}
+#else
 #if defined(__GNUC__)
 [[noreturn]] inline __attribute__((always_inline)) void unreachable() {
   __builtin_unreachable();
@@ -28,6 +33,7 @@ namespace abu::dbg {
 }
 #else
 inline void unreachable() {}
+#endif
 #endif
 }  // namespace abu::dbg
 
