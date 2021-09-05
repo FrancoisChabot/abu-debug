@@ -1,12 +1,12 @@
 name: CI
 
-on: [push, pull_request]
+on: push
 
 jobs:
-  build-and-test-ubuntu:
+  build-and-test-ubuntu-gcc:
     strategy:
       matrix:
-        compiler: [g++-10, clang++-10, clang++-11, clang++-12]
+        compiler: [g++-10]
         build_type: [Debug, Release]
 
     runs-on: ubuntu-20.04 
@@ -24,7 +24,46 @@ jobs:
         working-directory: ${{github.workspace}}/build
         run: ctest -C ${{matrix.build_type}} --output-on-failure
   
-  build-and-test-windows:
+  build-and-test-ubuntu-clang:
+    strategy:
+      matrix:
+        compiler: [clang++-10, clang++-11, clang++-12]
+        build_type: [Debug, Release]
+
+    runs-on: ubuntu-20.04 
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure
+        env:
+          CXX: ${{matrix.compiler}}
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
+
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}}
+
+      - name: Test
+        working-directory: ${{github.workspace}}/build
+        run: ctest -C ${{matrix.build_type}} --output-on-failure
+
+  build-and-test-macos-clang:
+    strategy:
+      matrix:
+        build_type: [Debug, Release]
+
+    runs-on: macos-10.15
+    steps:
+      - uses: actions/checkout@v2
+      - name: Configure
+        run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{matrix.build_type}}
+
+      - name: Build
+        run: cmake --build ${{github.workspace}}/build --config ${{matrix.build_type}}
+
+      - name: Test
+        working-directory: ${{github.workspace}}/build
+        run: ctest -C ${{matrix.build_type}} --output-on-failure
+
+  build-and-test-msvc-windows:
     strategy:
       matrix:
         build_type: [Debug, Release]
