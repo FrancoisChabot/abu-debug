@@ -4,6 +4,12 @@ This is part of the [Abu](http://github.com/FrancoisChabot/abu) meta-project.
 
 This contains utilities to ensure program correctness.
 
+## Enabling Checks
+
+If the `ABU_ENABLE_CHECKS` macro is set to `1`, then aggressive verification
+will be enabled, at the cost of performance. If unspecified, it will be set if
+`NDEBUG` is not set.
+
 ## Quick reference
 
 ### `abu::dbg::unreachable` 

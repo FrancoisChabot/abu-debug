@@ -15,9 +15,12 @@ if (NOT TARGET GTest::gtest_main)
   FetchContent_MakeAvailable(googletest)
 endif()
 
-add_library(abu_debug INTERFACE)
-target_include_directories(abu_debug INTERFACE include)
-target_compile_features(abu_debug INTERFACE cxx_std_20)
+add_library(abu_debug 
+  src/abu_debug.cpp
+)
+
+target_include_directories(abu_debug PUBLIC include)
+target_compile_features(abu_debug PUBLIC cxx_std_20)
 
 add_library(abu::debug ALIAS abu_debug)
 
